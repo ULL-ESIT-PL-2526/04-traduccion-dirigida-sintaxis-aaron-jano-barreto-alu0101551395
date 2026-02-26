@@ -89,5 +89,19 @@ La regla . que devuelve INVALID existe para capturar cualquier carácter que no 
 
 Si aparece un símbolo no válido (por ejemplo @), el lexer no se detiene ni falla silenciosamente, sino que genera explícitamente el token INVALID, permitiendo detectar y manejar errores léxicos.
 
+#### 3. Modifique el analizador léxico de grammar.jison para que se salte los comentarios de una línea que empiezan por //.
 
+Se puso:
+```js
+\/\/.*\n { /* skip comments */; }
+```
+porque:
+
+\\/\\/ reconoce literalmente // (la barra se escapa con \\).
+
+.* consume cualquier carácter después de //.
+
+\n asegura que el comentario se consuma hasta el final de la línea.
+
+No se devuelve ningún token, por lo que el comentario se ignora.
 
