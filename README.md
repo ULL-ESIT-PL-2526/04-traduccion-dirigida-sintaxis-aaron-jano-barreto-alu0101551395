@@ -29,3 +29,21 @@ Type ".help" for more information.
 > p.parse("2*3")
 6
 ```
+
+# Práctica 4: Traducción dirigida por la sintaxis: léxico
+
+Esta es la cuarta práctica de la asignatura de Procesadores de Lenguajes del Grado en Ingeniería Informática de la Universidad de La Laguna. La cual tiene como objetivo familiarizarse con los siguientes elementos:
+
+1. Syntax Directed Definition - sdd
+2. Jison
+    - Más concretamente el especificación del analizador léxico que se encuentra dentro del bloque %lex
+3. Expresiones regulares
+4. Tests de jest.
+
+## Desarrollo de las tareas
+
+### 1. Analisis del repositorio del proyecto
+
+- Se instalaron las dependencias del proyecto definidas en package.json mediante `npm i`.
+- Se ejecuta Jison para producir el parser `npx jison src/grammar.jison -o src/parser.js`.
+- Y se ejecutan las pruebas de Jest `npm test` comprobando que todas son superadas.
