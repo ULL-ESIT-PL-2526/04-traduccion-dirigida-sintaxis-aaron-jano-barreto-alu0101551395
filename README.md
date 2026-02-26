@@ -47,3 +47,47 @@ Esta es la cuarta práctica de la asignatura de Procesadores de Lenguajes del Gr
 - Se instalaron las dependencias del proyecto definidas en package.json mediante `npm i`.
 - Se ejecuta Jison para producir el parser `npx jison src/grammar.jison -o src/parser.js`.
 - Y se ejecutan las pruebas de Jest `npm test` comprobando que todas son superadas.
+
+### 2. La parte donde se definen los tokens en un fichero Jison se denomina especificación del analizador léxico o lexer y se encuentra dentro del bloque %lex.
+El del fichero grammar.jison es el siguiente:
+```js
+/* Lexer */
+%lex
+%%
+\s+ { /* skip whitespace */; }
+[0-9]+ { return 'NUMBER'; }
+"**" { return 'OP'; }
+[-+*/] { return 'OP'; }
+<<EOF>> { return 'EOF'; }
+. { return 'INVALID'; }
+/lex
+```
+
+#### 2.1.  Describa la diferencia entre /* skip whitespace */ y devolver un token: 
+
+/* skip whitespace */ no devuelve ningún token, simplemente ignora los espacios en blanco y el lexer continúa leyendo la siguiente entrada.
+
+En cambio, devolver un token (return 'NUMBER';, por ejemplo) envía ese token al parser para que forme parte del análisis sintáctico.
+
+#### 2.2. Escriba la secuencia exacta de tokens producidos para la entrada 123**45+@.
+
+NUMBER OP NUMBER OP INVALID EOF
+
+#### 2.3 Indique por qué ** debe aparecer antes que [-+*/]
+
+"**" debe aparecer antes que [-+*/] porque el lexer aplica las reglas en orden cuando varias expresiones pueden coincidir con la misma entrada.
+
+Si [-+*/] estuviera antes, al leer ** reconocerían dos tokens OP (uno por cada *) en lugar de un único token OP correspondiente a la potencia.
+
+#### 2.4 Explique cuándo se devuelve EOF
+
+Se devuelve EOF cuando el lexer alcanza el final de la entrada y ya no quedan más caracteres por analizar.
+
+#### 2.5 Explique por qué existe la regla . que devuelve INVALID.
+
+La regla . que devuelve INVALID existe para capturar cualquier carácter que no coincida con las reglas anteriores.
+
+Si aparece un símbolo no válido (por ejemplo @), el lexer no se detiene ni falla silenciosamente, sino que genera explícitamente el token INVALID, permitiendo detectar y manejar errores léxicos.
+
+
+
