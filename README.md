@@ -105,3 +105,16 @@ porque:
 
 No se devuelve ningún token, por lo que el comentario se ignora.
 
+#### 4. Modifique el analizador léxico de grammar.jison para que reconozca números en punto flotante como 2.35e-3, 2.35e+3, 2.35E-3, 2.35 y 23.
+
+Se puso:
+```js
+[0-9]+(\.[0-9]+)?([eE][+-]?[0-9]+)? { return 'NUMBER';       }
+```
+porque:
+
+[0-9]+ → parte entera
+
+(\.[0-9]+)? → parte decimal opcional
+
+([eE][+-]?[0-9]+)? → exponente opcional, con +, - o sin signo
