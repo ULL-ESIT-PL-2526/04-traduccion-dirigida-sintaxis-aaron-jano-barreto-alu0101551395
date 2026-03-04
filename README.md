@@ -161,6 +161,53 @@ Esta es la quinta práctica de la asignatura de Procesadores de Lenguajes del Gr
   -> 7 - 4 / 2 eof  
 
   1.2. Escriba el árbol de análisis sintáctico (*parse tree*) para cada una de las frases.
+
+  - 4.0 - 2.0 * 3.0  
+```
+          L
+       /     \
+      E      eof
+    / | \
+   E  op  T
+   | (*)  |
+  /|\   number(3.0)
+ E op T
+ | (-) |
+ T   number(2.0)
+ |
+number(4.0)
+```
+  - 2\**3**2  
+```
+          L
+       /     \
+      E      eof
+    / | \
+   E  op  T
+   | (**) |
+  /|\   number(2)
+ E op T
+ |(**)|
+ T  number(3)
+ |
+number(2)
+```
+  - 7 - 4 / 2  
+```
+          L
+       /     \
+      E      eof
+    / | \
+   E  op  T
+   | (/)  |
+  /|\   number(2)
+ E op T
+ | (-) |
+ T   number(4)
+ |
+number(7)
+```
+
   1.3. ¿En qué orden se evaluan las acciones semánticas para cada una de las frases?
   Nótese que la evaluación a la que da lugar la sdd para las frases no se corresponde con los
   convenios de evaluación establecidos en matemáticas y los lenguajes de programación.
