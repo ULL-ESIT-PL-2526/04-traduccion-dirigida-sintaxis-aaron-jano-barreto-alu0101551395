@@ -115,3 +115,90 @@ describe('Decimal and scientific notation handling', () => {
   });
 });
 ```
+
+# Práctica 5: Traducción dirigida por la sintaxis: gramática
+
+Esta es la quinta práctica de la asignatura de Procesadores de Lenguajes del Grado en Ingeniería Informática de la Universidad de La Laguna. El objetivo principal de esta práctica es profundizar en el uso de herramientas de generación de analizadores sintácticos como Jison, mediante la transición de una gramática simple y ambigua hacia una implementación robusta que respete las reglas de precedencia y asociatividad de operadores. A través del análisis de derivaciones y árboles sintácticos, el estudiante deberá identificar las limitaciones de una Definición Dirigida por la Sintaxis (SDD) básica para luego refactorizarla, integrando jerarquías de operadores (aditivos, multiplicativos y de potencia), recursividad a la derecha para la asociatividad de la potencia y el manejo de subexpresiones entre paréntesis. Todo el proceso está guiado por el desarrollo basado en pruebas (TDD), donde la validación mediante Jest garantiza que la lógica semántica de la calculadora se alinee finalmente con los convenios estándar de los lenguajes de programación y las matemáticas.
+
+## Desarrollo de las tareas
+
+1. Partiendo de la gramática y las siguientes frases 4.0-2.0*3.0, 2\**3**2 y 7-4/2:
+  1.1. Escriba la derivación para cada una de las frases.
+  - 4.0 - 2.0 * 3.0  
+  L -> E eof  
+  -> E op T eof  
+  -> E op T op T eof  
+  -> T op T op T eof  
+  -> number op T op T eof  
+  -> 4.0 - T op T eof  
+  -> 4.0 - number op T eof  
+  -> 4.0 - 2.0 * T eof  
+  -> 4.0 - 2.0 * number eof  
+  -> 4.0 -2.0 * 3.0 eof  
+
+  - 2\**3**2  
+  L -> E eof  
+  -> E op T eof  
+  -> E op T op T eof  
+  -> T op T op T eof  
+  -> number op T op T eof  
+  -> 2 ** T op T eof  
+  -> 2 ** number op T eof  
+  -> 2 ** 3 ** T eof  
+  -> 2 ** 3 ** number eof  
+  -> 2 ** 3 ** 2 eof  
+
+  - 7 - 4 / 2  
+  L -> E eof  
+  -> E op T eof  
+  -> E op T op T eof  
+  -> T op T op T eof  
+  -> number op T op T eof  
+  -> 7 - T op T eof  
+  -> 7 - number op T eof  
+  -> 7 - 4 / T eof  
+  -> 7 - 4 / number eof  
+  -> 7 - 4 / 2 eof  
+
+  1.2. Escriba el árbol de análisis sintáctico (*parse tree*) para cada una de las frases.
+  1.3. ¿En qué orden se evaluan las acciones semánticas para cada una de las frases?
+  Nótese que la evaluación a la que da lugar la sdd para las frases no se corresponde con los
+  convenios de evaluación establecidos en matemáticas y los lenguajes de programación.
+  1.4. Añada un fichero prec.test.js al directorio **\_\_test__** con las siguientes pruebas y compruebe que con la implementación actual fallan.
+  ```js
+  describe('Parser Failing Tests', () => {
+    test('should handle multiplication and division before addition and subtraction', () => {
+      expect(parse("2 + 3 * 4")).toBe(14); // 2 + (3 * 4) = 14
+      expect(parse("10 - 6 / 2")).toBe(7); // 10 - (6 / 2) = 7
+      expect(parse("5 * 2 + 3")).toBe(13); // (5 * 2) + 3 = 13
+      expect(parse("20 / 4 - 2")).toBe(3); // (20 / 4) - 2 = 3
+    });
+    test('should handle exponentiation with highest precedence', () => {
+      expect(parse("2 + 3 ** 2")).toBe(11); // 2 + (3 ** 2) = 11
+      expect(parse("2 * 3 ** 2")).toBe(18); // 2 * (3 ** 2) = 18
+      expect(parse("10 - 2 ** 3")).toBe(2); // 10 - (2 ** 3) = 2
+    });
+    test('should handle right associativity for exponentiation', () => {
+      expect(parse("2 ** 3 ** 2")).toBe(512); // 2 ** (3 ** 2) = 2 ** 9 = 512
+      expect(parse("3 ** 2 ** 2")).toBe(81); // 3 ** (2 ** 2) = 3 ** 4 = 81
+    });
+    test('should handle mixed operations with correct precedence', () => {
+      expect(parse("1 + 2 * 3 - 4")).toBe(3); // 1 + (2 * 3) - 4 = 3
+      expect(parse("15 / 3 + 2 * 4")).toBe(13); // (15 / 3) + (2 * 4) = 13
+      expect(parse("10 - 3 * 2 + 1")).toBe(5); // 10 - (3 * 2) + 1 = 5
+    });
+    test('should handle expressions with exponentiation precedence', () => {
+      expect(parse("2 ** 3 + 1")).toBe(9); // (2 ** 3) + 1 = 9
+      expect(parse("3 + 2 ** 4")).toBe(19); // 3 + (2 ** 4) = 19
+      expect(parse("2 * 3 ** 2 + 1")).toBe(19); // 2 * (3 ** 2) + 1 = 19
+    });
+    test('should handle various realistic calculations with correct precedence', () => {
+      expect(parse("1 + 2 * 3")).toBe(7); // 1 + (2 * 3) = 7
+      expect(parse("6 / 2 + 4")).toBe(7); // (6 / 2) + 4 = 7
+      expect(parse("2 ** 2 + 1")).toBe(5); // (2 ** 2) + 1 = 5
+      expect(parse("10 / 2 / 5")).toBe(1); // (10 / 2) / 5 = 1
+      expect(parse("100 - 50 + 25")).toBe(75); // (100 - 50) + 25 = 75
+      expect(parse("2 * 3 + 4 * 5")).toBe(26); // (2 * 3) + (4 * 5) = 26
+    });
+  });
+  ```
