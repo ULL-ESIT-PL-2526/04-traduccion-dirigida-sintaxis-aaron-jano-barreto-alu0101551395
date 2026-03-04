@@ -250,3 +250,10 @@ number(7)
     });
   });
   ```
+  ```bash
+  Test Suites: 1 failed, 1 total
+  Tests:       6 failed, 6 total
+  Snapshots:   0 total
+  Time:        0.47 s, estimated 1 s
+  Ran all test suites matching prec.test.js.
+  ```
