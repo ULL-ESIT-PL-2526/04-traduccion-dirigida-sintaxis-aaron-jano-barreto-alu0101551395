@@ -209,8 +209,9 @@ number(7)
 ```
 
   1.3. ¿En qué orden se evaluan las acciones semánticas para cada una de las frases?
-  Nótese que la evaluación a la que da lugar la sdd para las frases no se corresponde con los
-  convenios de evaluación establecidos en matemáticas y los lenguajes de programación.
+
+  Las acciones semánticas se evalúan siguiendo un recorrido post-orden del árbol (de abajo hacia arriba y de izquierda a derecha), lo que en esta gramática resulta en una ejecución estrictamente de izquierda a derecha.
+  
   1.4. Añada un fichero prec.test.js al directorio **\_\_test__** con las siguientes pruebas y compruebe que con la implementación actual fallan.
   ```js
   describe('Parser Failing Tests', () => {
