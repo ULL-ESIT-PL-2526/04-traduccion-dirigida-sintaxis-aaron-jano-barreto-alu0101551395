@@ -15,7 +15,7 @@
 
 /* Parser */
 %start L
-%token number opow opad opmu eof \( \)
+%token number opow opad opmu eof ( )
 
 %left opad opmu
 %right opow
