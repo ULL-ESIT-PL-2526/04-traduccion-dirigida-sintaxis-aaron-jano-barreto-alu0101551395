@@ -1,35 +1,46 @@
 /* Lexer */
 %lex
 %%
-\s+                   { /* skip whitespace */; }
-\/\/.*\n              { /* skip comments */; }
-[0-9]+(\.[0-9]+)?([eE][+-]?[0-9]+)? { return 'NUMBER';       }
-"**"                  { return 'OP';           }
-[-+*/]                { return 'OP';           }
-<<EOF>>               { return 'EOF';          }
+\s+                   { /* skip whitespace */ }
+\/\/.*              { /* skip comments */ }
+[0-9]+(\.[0-9]+)?([eE][+-]?[0-9]+)? { return 'number';       }
+"**"                  { return 'opow';           }
+[-+]                { return 'opad';           }
+[*\/]                { return 'opmu';           }
+<<EOF>>               { return 'eof';          }
 .                     { return 'INVALID';      }
 /lex
 
 /* Parser */
-%start expressions
-%token NUMBER
+%start L
+%token number opow opad opmu eof
+
+%left opad opmu
+%right opow
+
 %%
 
-expressions
-    : expression EOF
-        { return $expression; }
+L
+    : E eof { return $1; }
     ;
 
-expression
-    : expression OP term
-        { $$ = operate($OP, $expression, $term); }
-    | term
-        { $$ = $term; }
+E
+    : E opad T { $$ = operate($2, $1, $3); }
+    | T { $$ = $1; }
     ;
 
-term
-    : NUMBER
-        { $$ = Number(yytext); }
+T
+    : T opmu R { $$ = operate( $2, $1, $3);}
+    | R { $$ = $1; }
+    ;
+
+R
+    : F opow R {$$ = operate($2, $1, $3);}
+    | F  {$$ = $1;}
+    ;
+
+F 
+    : number {$$ = Number($1);}
     ;
 %%
 

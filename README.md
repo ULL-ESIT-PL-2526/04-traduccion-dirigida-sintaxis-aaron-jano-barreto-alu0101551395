@@ -122,8 +122,8 @@ Esta es la quinta práctica de la asignatura de Procesadores de Lenguajes del Gr
 
 ## Desarrollo de las tareas
 
-1. Partiendo de la gramática y las siguientes frases 4.0-2.0*3.0, 2\**3**2 y 7-4/2:
-  1.1. Escriba la derivación para cada una de las frases.
+### 1. Partiendo de la gramática y las siguientes frases 4.0-2.0*3.0, 2\**3**2 y 7-4/2:
+  #### 1.1. Escriba la derivación para cada una de las frases.
   - 4.0 - 2.0 * 3.0  
   L -> E eof  
   -> E op T eof  
@@ -160,7 +160,7 @@ Esta es la quinta práctica de la asignatura de Procesadores de Lenguajes del Gr
   -> 7 - 4 / number eof  
   -> 7 - 4 / 2 eof  
 
-  1.2. Escriba el árbol de análisis sintáctico (*parse tree*) para cada una de las frases.
+  #### 1.2. Escriba el árbol de análisis sintáctico (*parse tree*) para cada una de las frases.
 
   - 4.0 - 2.0 * 3.0  
 ```
@@ -208,11 +208,11 @@ number(2)
 number(7)
 ```
 
-  1.3. ¿En qué orden se evaluan las acciones semánticas para cada una de las frases?
+  #### 1.3. ¿En qué orden se evaluan las acciones semánticas para cada una de las frases?
 
   Las acciones semánticas se evalúan siguiendo un recorrido post-orden del árbol (de abajo hacia arriba y de izquierda a derecha), lo que en esta gramática resulta en una ejecución estrictamente de izquierda a derecha.
   
-  1.4. Añada un fichero prec.test.js al directorio **\_\_test__** con las siguientes pruebas y compruebe que con la implementación actual fallan.
+  #### 1.4. Añada un fichero prec.test.js al directorio **\_\_test__** con las siguientes pruebas y compruebe que con la implementación actual fallan.
   ```js
   describe('Parser Failing Tests', () => {
     test('should handle multiplication and division before addition and subtraction', () => {
@@ -257,3 +257,44 @@ number(7)
   Time:        0.47 s, estimated 1 s
   Ran all test suites matching prec.test.js.
   ```
+
+
+### 2. Modifique la gramática del fichero grammar.jison de manera que se respete la precedencia y la
+asociatividad de los operadores matemáticos.
+Los operadores aditivos - y + son asociativos por la izquierda y tiene la misma precedencia.
+Los operadores multiplicativos * y / son asociativos por la izquierda y tienen la misma
+precedencia. Además tiene mayor precedencia que los operadores aditivos.
+El operador de potencia ↑ es asociativo por la derecha y tiene mayor precedencia que los
+operadores multiplicativos.
+| Producción| Regla semántica |
+| :--- | :--- |
+| L → E eof | L.value = E.value|
+| E → E1 opad T | E.value = operate ( opad.lexvalue, E1.value , T.value) |
+| E → T | E.value =  T.value |
+| T → T1 opmu R | T.value = operate ( opmu.lexvalue, T1.value , R.value) |
+| T → R | T.value = R.value |
+| R → F opow R | R.value = operate ( opow.lexvalue, F.value , R1.value) |
+| R → F | R.value = F.value |
+| F → number | F.value = convert (number.lexvalue) | 
+
+El token opad permite representar a los operadores + y - el token opmu a *, / y el token opow
+a ↑.
+
+Se complementó el código para que el lexer detectara los tokens eof, opad, opmu, opow y number y se implemenó la gramática
+del enunciado junto a los valores anotados de cada nodo del parse tree.
+
+```bash
+usuario@ubuntu:~/practicas/04-traduccion-dirigida-sintaxis-aaron-jano-barreto-alu0101551395$ npm test
+
+> 04-traduccion@1.0.0 test
+> jest
+
+ PASS  __tests__/prec.test.js
+ PASS  __tests__/parser.test.js
+
+Test Suites: 2 passed, 2 total
+Tests:       26 passed, 26 total
+Snapshots:   0 total
+Time:        0.511 s, estimated 1 s
+Ran all test suites.
+```
