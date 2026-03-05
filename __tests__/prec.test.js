@@ -87,3 +87,17 @@ describe('comprobar que se respeta la precedencia y asociatividad con flotantes'
     expect(parse("0.5 * 4.0")).toBe(2.0);
   });
 });
+
+describe('puebas de paretnesis', () => {
+  test('should handle parentheses to override precedence', () => {
+    expect(parse("(2 + 3) * 4")).toBe(20); // (2 + 3) * 4 = 20
+    expect(parse("10 - (6 / 2)")).toBe(7); // 10 - (6 / 2) = 7
+    expect(parse("(5 * 2) + 3")).toBe(13); // (5 * 2) + 3 = 13
+    expect(parse("20 / (4 - 2)")).toBe(10); // 20 / (4 - 2) = 10
+    expect(parse("(1 + 2) * (3 + 4)")).toBe(21); // (1 + 2) * (3 + 4) = 21
+    expect(parse("((1 + 2) * 3) + 4")).toBe(13); // ((1 + 2) * 3) + 4 = 13
+    expect(parse("2 ** (3 + 2)")).toBe(32); // 2 ** (3 + 2) = 32
+    expect(parse("(2 + 3) ** 2")).toBe(25); // (2 + 3) ** 2 = 25
+    expect(parse("((2 + 3) * 4) - (5 * (6 - 4))")).toBe(10); // ((2 + 3) * 4) - (5 * (6 - 4)) = 10
+  });
+});

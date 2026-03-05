@@ -7,13 +7,15 @@
 "**"                  { return 'opow';           }
 [-+]                { return 'opad';           }
 [*\/]                { return 'opmu';           }
+"("                   { return '(';             }
+")"                   { return ')';             }   
 <<EOF>>               { return 'eof';          }
 .                     { return 'INVALID';      }
 /lex
 
 /* Parser */
 %start L
-%token number opow opad opmu eof
+%token number opow opad opmu eof \( \)
 
 %left opad opmu
 %right opow
@@ -42,6 +44,11 @@ R
 F 
     : number {$$ = Number($1);}
     ;
+
+F
+    : '(' E ')' {$$ = $2;}
+    ;
+
 %%
 
 function operate(op, left, right) {
